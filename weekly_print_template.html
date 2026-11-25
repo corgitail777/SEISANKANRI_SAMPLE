@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>A3週間生産計画</title>
+  <style>
+    :root{font-family:"Yu Gothic UI","Meiryo",sans-serif;color:#172b3b;background:#eef2f5}
+    *{box-sizing:border-box}body{margin:0;background:#eef2f5}.screen-tools{position:sticky;top:0;z-index:20;display:flex;justify-content:flex-end;gap:8px;padding:10px 18px;background:#16324f}.screen-tools button{border:1px solid #b9c7d1;border-radius:7px;padding:8px 18px;background:#fff;color:#16324f;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}.screen-tools .print{border-color:#1184bd;background:#1184bd;color:#fff}.page{width:406mm;height:285mm;margin:10mm auto;padding:5mm;background:#fff;page-break-after:always;overflow:hidden;box-shadow:0 4px 20px rgba(22,50,79,.2)}.page:last-of-type{page-break-after:auto}.heading{height:14mm;display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:2mm}.heading h1{margin:0;font-size:18pt}.meta{text-align:right;font-size:10pt;font-weight:700}.plan-table{width:100%;height:258mm;table-layout:fixed;border-collapse:collapse}.plan-table th,.plan-table td{border:.3mm solid #8295a3}.plan-table thead{height:13mm}.plan-table thead th{background:#16324f;color:#fff;font-size:11pt}.plan-table .machine-head{width:18mm}.plan-table tbody tr{height:var(--row-height)}.plan-table tbody th{background:#eaf5fb;color:#16324f;font-size:12pt}.plan-table td{padding:1.2mm;vertical-align:top}.jobs{display:flex;width:100%;height:100%;gap:.7mm;font-size:8.2pt;line-height:1.12}.jobs.count-2{font-size:6.9pt}.jobs.count-3{font-size:5.8pt}.jobs.count-4,.jobs.count-5,.jobs.count-many{font-size:5pt}.job{flex:1;min-width:0;padding:1mm;border-left:1mm solid #1184bd;background:#edf7fc;overflow:hidden}.free-job{border-left-color:#dc7b18;background:#fde2c2;color:#5f3308}.job-line{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:1.2mm;margin-bottom:.55mm}.job-label{color:#536b7c;white-space:nowrap}.job-value{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}.material-line{align-items:start;font-size:.92em}.material-line .job-value{overflow:visible;text-overflow:clip;white-space:normal;overflow-wrap:anywhere;word-break:break-all;line-height:1.08}.memo-line{align-items:start;color:#c62828;font-weight:900}.memo-line .job-label,.memo-line .job-value{color:#c62828}.memo-line .job-value{overflow:visible;text-overflow:clip;white-space:normal;overflow-wrap:anywhere;word-break:break-all;line-height:1.08}.empty{display:grid;place-items:center;height:100%;color:#9aabb7;font-size:8pt}.blank-machine{background:#f6f8f9}.page-no{position:absolute;right:7mm;bottom:3mm;font-size:8pt;color:#637786}.page{position:relative}
+    @page{size:A3 landscape;margin:6mm}
+    @media print{body{background:#fff}.screen-tools{display:none}.page{width:auto;height:285mm;margin:0;padding:5mm;box-shadow:none}}
+  </style>
+</head>
+<body>
+  <nav class="screen-tools"><button type="button" data-action="weekly">週間計画へ戻る</button><button class="print" type="button" id="printButton">印刷</button></nav>
+  <section class="page" style="--row-height:{{ROW_HEIGHT}}mm"><header class="heading"><h1>週間生産計画</h1><div class="meta">{{PERIOD}}<br>{{PAGE1_RANGE}}</div></header><table class="plan-table"><thead><tr><th class="machine-head">設備</th>{{DAY_HEADERS}}</tr></thead><tbody>{{PAGE1_ROWS}}</tbody></table><div class="page-no">1 / 2</div></section>
+  <section class="page" style="--row-height:{{ROW_HEIGHT}}mm"><header class="heading"><h1>週間生産計画</h1><div class="meta">{{PERIOD}}<br>{{PAGE2_RANGE}}</div></header><table class="plan-table"><thead><tr><th class="machine-head">設備</th>{{DAY_HEADERS}}</tr></thead><tbody>{{PAGE2_ROWS}}</tbody></table><div class="page-no">2 / 2</div></section>
+  <script>
+    const sendAction=action=>location.href='action.html?action='+action;
+    document.querySelector('[data-action="weekly"]').addEventListener('click',()=>sendAction('weekly'));
+    document.querySelector('#printButton').addEventListener('click',()=>window.print());
+  </script>
+</body>
+</html>

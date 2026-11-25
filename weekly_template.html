@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>週間生産計画</title>
+  <style>
+    :root{--navy:#16324f;--blue:#1184bd;--soft:#eaf5fb;--line:#d5dee6;--ink:#243747;--muted:#667887;--paper:#f5f8fa;--conflict:#8e44ad;--conflict-soft:#f1e4f7;--memo:#c62828;font-family:"Yu Gothic UI","Meiryo",sans-serif;color:var(--ink);background:var(--paper)}
+    *{box-sizing:border-box}body{margin:0;min-width:1050px;overflow:hidden;background:var(--paper)}button,input{font:inherit}.app{padding:18px 20px 24px}.view-tabs{display:flex;gap:4px;margin-bottom:8px}.view-tab{border:1px solid #b8c5cf;border-radius:8px 8px 0 0;padding:8px 18px;background:#fff;color:var(--navy);font-weight:800;cursor:pointer}.view-tab.active{border-color:var(--navy);background:var(--navy);color:#fff}.toolbar{min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:8px}.title{display:flex;align-items:baseline;gap:14px}h1{margin:0;font-size:26px;letter-spacing:.03em;color:var(--navy)}.period{color:var(--muted);font-size:15px;font-weight:700}.month-nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 12px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:#fff}.month-nav input{border:1px solid #b8c5cf;border-radius:6px;padding:5px 7px;background:#fff;color:var(--navy);font-weight:800;text-align:center}.year-input{width:86px}.month-input{width:62px}.month-label{margin-right:3px;color:var(--muted);font-size:13px;font-weight:800}.unit-label{color:var(--navy);font-size:13px;font-weight:800}.week-link{border:1px solid #9fc3d7;border-radius:6px;padding:5px 9px;background:#f4fbff;color:var(--navy);font-size:12px;font-weight:800;cursor:pointer}.week-link.active{border-color:var(--blue);background:var(--blue);color:#fff}.week-nav{display:flex;gap:8px;align-items:center}.nav-button{border:1px solid #b8c5cf;border-radius:8px;padding:8px 16px;background:#fff;color:var(--navy);font-weight:700;cursor:pointer}.nav-button.primary{border-color:var(--blue);background:var(--blue);color:#fff}.nav-button.save{border-color:#218838;background:#218838;color:#fff}.nav-button.cancel{border-color:#c62828;color:#c62828}.edit-state{padding:5px 9px;border-radius:999px;background:#fff3cd;color:#7a5a00;font-size:12px;font-weight:900}.edit-state.saved{background:#e7f4ea;color:#26713a}.schedule{display:grid;grid-template-columns:92px repeat(6,minmax(150px,1fr));max-height:calc(100vh - 205px);overflow:auto;border:1px solid #bdc9d2;border-radius:12px;background:#fff;box-shadow:0 8px 28px rgba(22,50,79,.08)}.corner,.day{position:sticky;top:0;z-index:20;min-height:58px;display:flex;align-items:center;justify-content:center;background:var(--navy);color:#fff;border-right:1px solid rgba(255,255,255,.25);font-weight:800}.corner{left:0;z-index:30}.day{flex-direction:column;gap:2px}.day strong{font-size:17px}.day span{font-size:13px;opacity:.82}.machine{position:sticky;left:0;z-index:15;min-height:172px;display:flex;align-items:center;justify-content:center;background:var(--soft);color:var(--navy);border-top:1px solid var(--line);border-right:1px solid var(--line);font-size:18px;font-weight:900}.slot{position:relative;min-height:172px;padding:8px 8px 37px;border-top:1px solid var(--line);border-right:1px solid var(--line);background:#fff;transition:background .15s,box-shadow .15s}.slot:nth-child(7n){border-right:0}.slot.conflict{background:var(--conflict-soft);box-shadow:inset 0 0 0 3px var(--conflict)}.slot.drop-target{background:#dff3ff;box-shadow:inset 0 0 0 3px var(--blue)}.plan{display:grid;grid-template-columns:21px minmax(0,1fr) auto;align-items:center;gap:4px 5px;min-height:38px;margin-bottom:4px;padding:4px 6px;border-left:4px solid var(--blue);border-radius:5px;background:#edf7fc;color:#17364c;font-size:13px;line-height:1.15;cursor:grab}.plan:active{cursor:grabbing}.slot.conflict .plan{border-left-color:var(--conflict)}.seq{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900}.slot.conflict .seq{background:var(--conflict)}.code{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800}.qty{color:#38576d;font-weight:700;white-space:nowrap}.time{grid-column:2/4;color:#607889;font-size:12px}.memo{grid-column:2/4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--memo);font-size:12px;font-weight:900}.add{position:absolute;right:8px;bottom:7px;border:0;border-radius:7px;padding:6px 12px;background:var(--blue);color:#fff;font-size:13px;font-weight:800;cursor:pointer}.add:hover,.nav-button.primary:hover{background:#0872a5}.empty{color:#9aabb7;font-size:13px;text-align:center;padding-top:28px}.more{margin-top:4px;color:#5f7484;font-size:12px;font-weight:700}.notice{position:fixed;right:20px;bottom:18px;z-index:40;transform:translateY(80px);opacity:0;padding:11px 16px;border-radius:8px;background:#18384f;color:#fff;font-size:14px;transition:.2s ease;pointer-events:none}.notice.show{transform:translateY(0);opacity:1}.context-menu{position:fixed;z-index:80;display:none;min-width:190px;padding:6px;border:1px solid #b9c5ce;border-radius:8px;background:#fff;box-shadow:0 8px 24px rgba(20,43,61,.24)}.context-menu.show{display:block}.context-menu button{display:block;width:100%;border:0;border-radius:5px;padding:9px 12px;background:#fff;color:var(--navy);text-align:left;font-weight:800;cursor:pointer}.context-menu button:hover{background:var(--soft)}
+    .plan-type-tabs{display:flex;gap:6px;margin:0 0 8px}.plan-type-tab{border:1px solid #b8c5cf;border-radius:7px;padding:6px 15px;background:#fff;color:var(--navy);font-weight:800;cursor:pointer}.plan-type-tab.active[data-plan-mode="normal"]{border-color:#65aeca;background:#d9f0fa}.plan-type-tab.active[data-plan-mode="free"]{border-color:#dc8b32;background:#fde2c2}.plan.free-plan{border-left-color:#dc7b18;background:#fde2c2;color:#5f3308}.plan.free-plan .seq{background:#df851f}.plan.free-plan .qty{color:#7a4815}.add.free-mode{background:#e18a2c}.add.free-mode:hover{background:#c87318}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <nav class="view-tabs" aria-label="計画表示の切り替え">
+      <button class="view-tab active" type="button">週間計画</button>
+      <button class="view-tab" type="button" data-action="daily">デイリー計画</button>
+      <button class="view-tab" type="button" data-action="plannedsummary">計画済み情報</button>
+      <button class="view-tab" type="button" data-action="entrance">玄関表示</button>
+      <button class="view-tab" type="button" data-action="master">マスター管理</button>
+    </nav>
+    <nav class="plan-type-tabs" aria-label="追加する計画の種類">
+      <button class="plan-type-tab active" type="button" data-plan-mode="normal">通常計画</button>
+      <button class="plan-type-tab" type="button" data-plan-mode="free">フリー計画</button>
+    </nav>
+    <header class="toolbar">
+      <div class="title"><h1>週間生産計画</h1><span class="period">{{PERIOD}}</span></div>
+      <nav class="week-nav" aria-label="週の切り替え">
+        <span class="edit-state" id="editState">未保存の変更あり</span>
+        <button class="nav-button cancel" type="button" data-action="weeklycancel">変更取消</button>
+        <button class="nav-button save" type="button" data-action="weeklysave">保存</button>
+        <button class="nav-button" type="button" data-action="printweek">A3印刷</button>
+        <button class="nav-button" type="button" data-action="prev">前週</button>
+        <button class="nav-button primary" type="button" data-action="today">今週</button>
+        <button class="nav-button" type="button" data-action="next">次週</button>
+      </nav>
+    </header>
+    <nav class="month-nav" aria-label="月と週の切り替え">
+      {{MONTH_NAV}}
+    </nav>
+    <section class="schedule" aria-label="週間生産計画表">
+      {{GRID}}
+    </section>
+  </main>
+  <div class="notice" role="status">{{UPDATED}}</div>
+  <div class="context-menu" role="menu"></div>
+  <script>
+    const notice=document.querySelector('.notice'),schedule=document.querySelector('.schedule'),menu=document.querySelector('.context-menu');let timer,dragging=false;
+    const hasChanges={{HAS_CHANGES}},editState=document.querySelector('#editState');
+    editState.textContent=hasChanges?'未保存の変更あり':'保存済み';editState.classList.toggle('saved',!hasChanges);
+    const scrollKey='production-plan-weekly-scroll';
+    const copyKey='production-plan-copied-id';
+    const planModeKey='production-plan-input-mode';
+    function saveScrollPosition(){sessionStorage.setItem(scrollKey,JSON.stringify({top:schedule.scrollTop,left:schedule.scrollLeft}))}
+    function restoreScrollPosition(){const saved=sessionStorage.getItem(scrollKey);if(!saved)return;try{const position=JSON.parse(saved);requestAnimationFrame(()=>{schedule.scrollTop=Number(position.top)||0;schedule.scrollLeft=Number(position.left)||0})}catch(error){}}
+    function showNotice(text){notice.textContent=text;clearTimeout(timer);notice.classList.add('show');timer=setTimeout(()=>notice.classList.remove('show'),2200)}
+    function sendAction(params){
+      const query=new URLSearchParams(params).toString();
+      window.location.href='action.html?'+query;
+    }
+    function hideMenu(){menu.classList.remove('show');menu.innerHTML=''}
+    function showMenu(x,y,items){menu.innerHTML='';items.forEach(item=>{const button=document.createElement('button');button.type='button';button.textContent=item.label;button.addEventListener('click',()=>{hideMenu();item.run()});menu.appendChild(button)});menu.style.left=Math.min(x,window.innerWidth-210)+'px';menu.style.top=Math.min(y,window.innerHeight-(items.length*42+16))+'px';menu.classList.add('show')}
+    function copyPlan(id,type='normal'){sessionStorage.setItem(copyKey,JSON.stringify({id,type}));showNotice(type==='free'?'フリー計画をコピーしました。貼り付け先を右クリックしてください。':'計画をコピーしました。貼り付け先を右クリックしてください。')}
+    function copiedPlan(){const value=sessionStorage.getItem(copyKey);if(!value)return null;try{return JSON.parse(value)}catch(error){return {id:value,type:'normal'}}}
+    function pastePlan(copied,slot){saveScrollPosition();sendAction({action:copied.type==='free'?'copyfree':'copyplan',id:copied.id,date:slot.dataset.date,machine:slot.dataset.machine,view:'weekly'})}
+    function deletePlan(id){saveScrollPosition();sendAction({action:'deleteplan',id,view:'weekly'})}
+    function deleteFreePlan(id){saveScrollPosition();sendAction({action:'deletefree',id,view:'weekly'})}
+    function applyPlanMode(mode){
+      sessionStorage.setItem(planModeKey,mode);
+      document.querySelectorAll('.plan-type-tab').forEach(button=>button.classList.toggle('active',button.dataset.planMode===mode));
+      document.querySelectorAll('.add').forEach(button=>{button.classList.toggle('free-mode',mode==='free');button.textContent=mode==='free'?'＋フリー':'＋追加'});
+    }
+    document.querySelectorAll('.plan-type-tab').forEach(button=>button.addEventListener('click',()=>applyPlanMode(button.dataset.planMode)));
+    function changeSelectedMonth(){
+      const year=Number(document.querySelector('#navYear').value),month=Number(document.querySelector('#navMonth').value);
+      if(year<2000||year>2100||month<1||month>12){showNotice('年・月を確認してください。');return}
+      sessionStorage.removeItem(scrollKey);sendAction({action:'monthnav',year,month});
+    }
+    document.querySelector('#navYear').addEventListener('change',changeSelectedMonth);
+    document.querySelector('#navMonth').addEventListener('change',changeSelectedMonth);
+    document.querySelectorAll('[data-action]').forEach(element=>{
+      element.addEventListener('click',()=>{
+        if(dragging){dragging=false;return}
+        const action=element.dataset.action;
+        if(hasChanges&&['daily','plannedsummary','entrance','master'].includes(action)){showNotice('先に「保存」または「変更取消」を押してください。');return}
+        if(action==='add'){saveScrollPosition();const mode=sessionStorage.getItem(planModeKey)||'normal';sendAction({action:mode==='free'?'addfree':'add',date:element.dataset.date,machine:element.dataset.machine,view:'weekly'});}
+        else if(action==='edit'||action==='editfree'){saveScrollPosition();sendAction({action,id:element.dataset.planId,view:'weekly'});}
+        else if(action==='monthnav'){sessionStorage.removeItem(scrollKey);sendAction({action,year:document.querySelector('#navYear').value,month:document.querySelector('#navMonth').value});}
+        else if(action==='weekdate'){sessionStorage.removeItem(scrollKey);sendAction({action,date:element.dataset.date});}
+        else{sessionStorage.removeItem(scrollKey);sendAction({action});}
+      });
+    });
+    document.querySelectorAll('.plan').forEach(plan=>{
+      plan.addEventListener('dragstart',event=>{if(plan.classList.contains('free-plan')){event.preventDefault();return}dragging=true;event.dataTransfer.effectAllowed='copy';event.dataTransfer.setData('text/plain',plan.dataset.planId)});
+      plan.addEventListener('dragend',()=>{document.querySelectorAll('.drop-target').forEach(slot=>slot.classList.remove('drop-target'));setTimeout(()=>dragging=false,0)});
+      plan.addEventListener('contextmenu',event=>{event.preventDefault();event.stopPropagation();const items=plan.classList.contains('free-plan')?
+        [{label:'このフリー計画をコピー',run:()=>copyPlan(plan.dataset.planId,'free')},{label:'このフリー計画を削除',run:()=>deleteFreePlan(plan.dataset.planId)}]:
+        [{label:'この計画をコピー',run:()=>copyPlan(plan.dataset.planId)},{label:'この計画を削除',run:()=>deletePlan(plan.dataset.planId)}];showMenu(event.clientX,event.clientY,items)});
+    });
+    document.querySelectorAll('.slot').forEach(slot=>{
+      slot.addEventListener('dragover',event=>{event.preventDefault();event.dataTransfer.dropEffect='copy';slot.classList.add('drop-target')});
+      slot.addEventListener('dragleave',()=>slot.classList.remove('drop-target'));
+      slot.addEventListener('drop',event=>{event.preventDefault();slot.classList.remove('drop-target');const id=event.dataTransfer.getData('text/plain');if(id)pastePlan({id,type:'normal'},slot)});
+      slot.addEventListener('contextmenu',event=>{if(event.target.closest('.plan'))return;event.preventDefault();const copied=copiedPlan();showMenu(event.clientX,event.clientY,copied?[{label:copied.type==='free'?'コピーしたフリー計画をここへ追加':'コピーした計画をここへ追加',run:()=>pastePlan(copied,slot)}]:[{label:'コピーした計画はありません',run:()=>showNotice('先に計画を右クリックしてコピーしてください。')}])});
+    });
+    document.addEventListener('click',hideMenu);
+    document.addEventListener('keydown',event=>{if(event.key==='Escape')hideMenu()});
+    applyPlanMode(sessionStorage.getItem(planModeKey)||'normal');
+    restoreScrollPosition();
+  </script>
+</body>
+</html>

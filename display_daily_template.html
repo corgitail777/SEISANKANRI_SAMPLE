@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>表示用デイリー生産計画</title>
+  <style>
+    :root{--navy:#16324f;--blue:#1184bd;--line:#cbd7df;--soft:#eaf5fb;--paper:#f3f7fa;--ink:#203443;font-family:"Yu Gothic UI","Meiryo",sans-serif;color:var(--ink);background:var(--paper)}
+    *{box-sizing:border-box}body{margin:0;min-width:1100px;background:var(--paper)}button{font:inherit}.app{padding:12px 16px 18px}.toolbar{height:68px;display:flex;align-items:center;justify-content:space-between;gap:18px}.title{display:flex;align-items:baseline;gap:18px}h1{margin:0;color:var(--navy);font-size:32px;letter-spacing:.03em}.date{color:#4e6577;font-size:23px;font-weight:900}.actions{display:flex;gap:8px}.nav{border:1px solid #aebdc8;border-radius:8px;padding:9px 17px;background:#fff;color:var(--navy);font-weight:800;cursor:pointer}.nav.primary{border-color:var(--blue);background:var(--blue);color:#fff}.board{height:calc(100vh - 90px);overflow:auto;border:1px solid #b8c7d1;border-radius:10px;background:#fff;box-shadow:0 6px 22px rgba(22,50,79,.1)}.time-header,.machine-row{display:grid;grid-template-columns:130px minmax(1450px,1fr)}.time-header{position:sticky;top:0;z-index:20}.corner{position:sticky;left:0;z-index:24;display:grid;place-items:center;min-height:60px;background:var(--navy);color:#fff;font-size:20px;font-weight:900}.hours{display:grid;grid-template-columns:repeat(24,1fr);min-height:60px;background:var(--navy);color:#fff}.hour{display:grid;place-items:center;border-left:1px solid rgba(255,255,255,.25);font-size:15px;font-weight:900}.machine-cell{position:sticky;left:0;z-index:12;display:flex;align-items:center;justify-content:center;min-height:106px;border-top:1px solid var(--line);border-right:1px solid var(--line);background:var(--soft);color:var(--navy);font-size:23px;font-weight:900}.timeline{position:relative;min-height:106px;border-top:1px solid var(--line);background:repeating-linear-gradient(to right,#fff 0,#fff calc(4.166666% - 1px),#dae3e9 calc(4.166666% - 1px),#dae3e9 4.166666%)}.plan{position:absolute;top:12px;height:80px;min-width:50px;overflow:hidden;border:0;border-left:6px solid #07668f;border-radius:7px;padding:7px 9px;background:linear-gradient(135deg,#117fb5,#169bd5);color:#fff;text-align:left;box-shadow:0 3px 8px rgba(17,84,122,.22);cursor:pointer}.plan:hover,.plan:focus{filter:brightness(.92);outline:3px solid rgba(17,132,189,.25)}.plan-main,.plan-sub,.plan-staff{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.plan-main{font-size:15px;font-weight:900}.plan-sub{margin-top:3px;font-size:14px;font-weight:800}.plan-staff{margin-top:3px;font-size:13px;font-weight:700}.empty{position:absolute;inset:0;display:grid;place-items:center;color:#9baab5;font-size:15px}.updated{position:fixed;right:18px;bottom:8px;z-index:30;padding:5px 10px;border-radius:6px;background:rgba(24,56,79,.9);color:#fff;font-size:12px}.modal-backdrop{display:none;position:fixed;inset:0;z-index:100;background:rgba(9,27,41,.58);align-items:center;justify-content:center;padding:28px}.modal-backdrop.open{display:flex}.modal{width:min(820px,92vw);max-height:90vh;overflow:auto;border-radius:14px;background:#fff;box-shadow:0 24px 70px rgba(0,0,0,.35)}.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:var(--navy);color:#fff}.modal-head h2{margin:0;font-size:24px}.close-x{border:0;background:transparent;color:#fff;font-size:30px;line-height:1;cursor:pointer}.details{display:grid;grid-template-columns:170px 1fr 170px 1fr;margin:22px 24px;border-top:1px solid var(--line);border-left:1px solid var(--line)}.details dt,.details dd{margin:0;padding:11px 13px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font-size:16px}.details dt{background:#edf4f8;color:var(--navy);font-weight:900}.details dd{background:#fff;font-weight:700;word-break:break-word}.details .wide-value{grid-column:2/5}.modal-foot{display:flex;justify-content:flex-end;padding:0 24px 22px}.close-button{border:0;border-radius:8px;padding:10px 30px;background:var(--navy);color:#fff;font-weight:900;cursor:pointer}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="toolbar">
+      <div class="title"><h1>デイリー生産計画</h1><span class="date">{{DATE}}</span></div>
+      <nav class="actions" aria-label="表示日の切り替え">
+        <button class="nav" type="button" data-action="prevdisplay">前日</button>
+        <button class="nav primary" type="button" data-action="todaydisplay">今日</button>
+        <button class="nav" type="button" data-action="nextdisplay">翌日</button>
+      </nav>
+    </header>
+    <section class="board" aria-label="表示用デイリー生産計画表">
+      <div class="time-header"><div class="corner">設備</div><div class="hours">{{HOURS}}</div></div>
+      {{ROWS}}
+    </section>
+  </main>
+  <div class="updated">{{UPDATED}}</div>
+  <div class="modal-backdrop" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <section class="modal">
+      <header class="modal-head"><h2 id="detailTitle">生産計画の詳細</h2><button class="close-x" type="button" aria-label="閉じる">×</button></header>
+      <dl class="details" id="detailList"></dl>
+      <footer class="modal-foot"><button class="close-button" type="button">閉じる</button></footer>
+    </section>
+  </div>
+  <script>
+    function sendAction(params){window.location.href='action.html?'+new URLSearchParams(params).toString()}
+    document.querySelectorAll('[data-action]').forEach(el=>el.addEventListener('click',()=>sendAction({action:el.dataset.action})))
+    const modal=document.getElementById('detailModal');
+    const detailList=document.getElementById('detailList');
+    const fields=[['成形日','date'],['成形順','sequence'],['設備','machine'],['SET/MULTI','type'],['品番R／MULTI','productR'],['品番L','productL'],['品目名称','productName'],['計画数量','quantity'],['開始時刻','start'],['終了時刻','end'],['サイクルタイム','cycle'],['取数','cavities'],['重量／1ヶ','weight'],['必要材料量','material'],['成形時間','hours'],['担当者','staff'],['休変者','relief'],['備考','note']];
+    function openDetail(el){
+      detailList.replaceChildren();
+      fields.forEach(([label,key])=>{
+        const term=document.createElement('dt');
+        const value=document.createElement('dd');
+        term.textContent=label;
+        value.textContent=el.dataset[key]||'－';
+        if(key==='productName'||key==='note')value.className='wide-value';
+        detailList.append(term,value);
+      });
+      modal.classList.add('open');
+    }
+    document.querySelectorAll('.plan').forEach(el=>el.addEventListener('click',()=>openDetail(el)));
+    function closeDetail(){modal.classList.remove('open')}
+    modal.querySelectorAll('.close-x,.close-button').forEach(el=>el.addEventListener('click',closeDetail));
+    modal.addEventListener('click',e=>{if(e.target===modal)closeDetail()});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail()});
+    setTimeout(()=>sendAction({action:'refreshdisplay'}),60000);
+  </script>
+</body>
+</html>
